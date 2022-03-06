@@ -1,18 +1,18 @@
 <template>
   <ul class="todo-main">
-    <MyItem v-for="todo in todos" :key="todo.id" :todoObj="todo" :todoChange="todoChange" :todoDel="todoDel"/>
+    <MyItem v-for="todo in todos" :key="todo.id" :todoObj="todo" />
   </ul>
 </template>
 
 <script>
-import MyItem from "./MyItem.vue";
+import MyItem from "./MyItem";
 export default {
   name: "MyList",
   components: {
     MyItem,
   },
-  props:["todos","todoChange","todoDel"]
-};
+  props: ["todos"]
+}
 </script>
 
 <style scoped>

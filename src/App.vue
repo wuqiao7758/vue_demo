@@ -3,7 +3,7 @@
     <div class="todo-container">
       <div class="todo-wrap">
         <MyHeader @addTodo="addTodo" />
-        <MyList :todos="todos" :todoChange="todoChange" :todoDel="todoDel" />
+        <MyList :todos="todos" />
         <MyFooter :todos="todos" @checkedIsAll="checkedIsAll" />
       </div>
     </div>
@@ -11,9 +11,9 @@
 </template>
 
 <script>
-import MyHeader from "./components/MyHeader.vue";
-import MyList from "./components/MyList.vue";
-import MyFooter from "./components/MyFooter.vue";
+import MyHeader from "./components/MyHeader"
+import MyList from "./components/MyList"
+import MyFooter from "./components/MyFooter"
 export default {
   name: "App",
   components: {
@@ -39,7 +39,6 @@ export default {
     },
     // 删除
     todoDel(id) {
-      console.log(id);
       this.todos = this.todos.filter((todo) => {
         return todo.id !== id;
       });
@@ -51,6 +50,13 @@ export default {
       })
     },
 
+  },
+  mounted() {
+    this.$bus.$on("todoChange", this.todoChange)
+    this.$bus.$on("todoDel", this.todoDel)
+  },
+  beforeDestroy() {
+    this.$bus.$off(["todoChange", "todoDel"])
   },
   watch: {
     todos: {

@@ -1,11 +1,7 @@
 <template>
   <li>
     <label>
-      <input
-        type="checkbox"
-        :checked="todoObj.done"
-        @change="checkedChange(todoObj.id)"
-      />
+      <input type="checkbox" :checked="todoObj.done" @change="checkedChange(todoObj.id)" />
       <span>{{ todoObj.title }}</span>
     </label>
     <button class="btn btn-danger" @click="todoDelete(todoObj.id)">删除</button>
@@ -15,16 +11,14 @@
 <script>
 export default {
   name: "MyItem",
-  props: ["todoObj", "todoChange","todoDel"],
+  props: ["todoObj"],
   methods: {
     checkedChange(id) {
-      this.todoChange(id)
-      
+      this.$bus.$emit("todoChange", id)
+
     },
-    todoDelete(id){
-      if(confirm("是否删除")){
-        this.todoDel(id)
-      }
+    todoDelete(id) {
+      this.$bus.$emit("todoDel", id)
     }
   },
 };
@@ -57,11 +51,11 @@ li button {
   display: none;
   margin-top: 3px;
 }
-li:hover{
+li:hover {
   background-color: #ccc;
 }
 
-li:hover button{
+li:hover button {
   display: block;
 }
 li:before {
