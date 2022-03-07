@@ -11,6 +11,7 @@
 </template>
 
 <script>
+import pubsub from 'pubsub-js'
 import MyHeader from "./components/MyHeader"
 import MyList from "./components/MyList"
 import MyFooter from "./components/MyFooter"
@@ -38,7 +39,7 @@ export default {
       });
     },
     // 删除
-    todoDel(id) {
+    todoDel(_, id) {
       this.todos = this.todos.filter((todo) => {
         return todo.id !== id;
       });
@@ -53,10 +54,13 @@ export default {
   },
   mounted() {
     this.$bus.$on("todoChange", this.todoChange)
-    this.$bus.$on("todoDel", this.todoDel)
+    // this.$bus.$on("todoDel", this.todoDel)
+    this.pubId = pubsub.subscribe("todoDel", this.todoDel)
   },
   beforeDestroy() {
-    this.$bus.$off(["todoChange", "todoDel"])
+    this.$bus.$off(["todoChange"])
+    pubsub.unsubscribe(this.pubId)
+
   },
   watch: {
     todos: {
