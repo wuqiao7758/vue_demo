@@ -41,7 +41,7 @@ export default {
     // 删除
     todoDel(_, id) {
       this.todos = this.todos.filter((todo) => {
-        return todo.id !== id;
+        return todo.id !== id
       });
     },
     // 全选或者全不选
@@ -50,15 +50,24 @@ export default {
         todo.done = done
       })
     },
+    // 更新数据
+    updataTodo(id, title) {
+      this.todos.forEach((todo) => {
+        if (todo.id === id) {
+          todo.title = title
+        }
+      })
+    }
 
   },
   mounted() {
     this.$bus.$on("todoChange", this.todoChange)
-    // this.$bus.$on("todoDel", this.todoDel)
     this.pubId = pubsub.subscribe("todoDel", this.todoDel)
+    this.$bus.$on("updataTodo", this.updataTodo)
+
   },
   beforeDestroy() {
-    this.$bus.$off(["todoChange"])
+    this.$bus.$off(["todoChange", "updataTodo"])
     pubsub.unsubscribe(this.pubId)
 
   },
@@ -96,6 +105,12 @@ body {
   color: #fff;
   background-color: #da4f49;
   border: 1px solid #bd362f;
+}
+.btn-edit {
+  color: #fff;
+  background-color: skyblue;
+  border: 1px solid rgb(60, 122, 146);
+  margin-right: 5px;
 }
 
 .btn-danger:hover {

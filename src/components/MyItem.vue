@@ -2,9 +2,18 @@
   <li>
     <label>
       <input type="checkbox" :checked="todoObj.done" @change="checkedChange(todoObj.id)" />
-      <span>{{ todoObj.title }}</span>
+      <!-- <input v-show="!todoObj.isEdit" type="checkbox" /> -->
+      <input
+        type="text"
+        ref="inputText"
+        v-show="todoObj.isEdit"
+        :value="todoObj.title"
+        @blur="handleBlur(todoObj, $event)"
+      />
+      <span v-show="!todoObj.isEdit">{{ todoObj.title }}</span>
     </label>
     <button class="btn btn-danger" @click="todoDelete(todoObj.id)">删除</button>
+    <button class="btn btn-edit" v-show="!todoObj.isEdit" @click="handleEdit(todoObj)">编辑</button>
   </li>
 </template>
 
@@ -22,7 +31,40 @@ export default {
       if (confirm("是否删除"))
         // this.$bus.$emit("todoDel", id)
         pubsub.publish("todoDel", id)
+    },
+    handleEdit(todoObj) {
+      // console.log("handleEdit被调用了")
+      if (todoObj.hasOwnProperty("isEdit")) {
+        console.log("有isEdit属性")
+        todoObj.isEdit = false
+
+        if (todoObj.isEdit === false) {
+          todoObj.isEdit = true
+        } else {
+          todoObj.isEdit = false
+        }
+      } else {
+        console.log("没有isEdit属性")
+
+        this.$set(todoObj, "isEdit", true)
+      }
+      this.$nextTick(function () {
+        this.$refs.inputText.focus()
+      })
+      // setTimeout(() => {
+      //   this.$refs.inputText.focus()
+      // }, 200)
+
+    },
+    handleBlur(todoObj, e) {
+      // this.$set(todoObj, "isEdit", false)
+      if (
+        e.target.value.trim() == "") return alert("输入不能为空")
+      todoObj.isEdit = false
+      this.$bus.$emit("updataTodo", todoObj.id, e.target.value)
+
     }
+
   },
 };
 </script>
