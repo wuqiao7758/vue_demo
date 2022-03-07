@@ -3,8 +3,8 @@
     <div class="todo-container">
       <div class="todo-wrap">
         <MyHeader @addTodo="addTodo" />
-        <MyList :todos="todos" />
-        <MyFooter :todos="todos" @checkedIsAll="checkedIsAll" />
+        <MyList :todos="todoscpd" />
+        <MyFooter :todos="todoscpd" @checkedIsAll="checkedIsAll" />
       </div>
     </div>
   </div>
@@ -30,8 +30,15 @@ export default {
   methods: {
     // 添加
     addTodo(todoTxt) {
+      let newTitle = this.todos.find(item => todoTxt.title === item.title)
+      console.log(newTitle)
 
-      this.todos.unshift(todoTxt);
+      if (!newTitle) {
+        this.todos.unshift(todoTxt)
+      } else {
+        alert("请不要输入已经存在内容" + newTitle.title)
+      }
+      // !newTitle && this.todos.unshift(todoTxt);
 
     },
     // 勾选
@@ -61,6 +68,16 @@ export default {
       })
     }
 
+  },
+  computed: {
+    todoscpd() {
+      let arr = []
+      this.todos.forEach((todo) => {
+        let bol = arr.find(item => item.title === todo.title)
+        !bol && arr.push(todo)
+      })
+      return arr
+    }
   },
   mounted() {
     this.$bus.$on("todoChange", this.todoChange)
