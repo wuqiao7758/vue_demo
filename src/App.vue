@@ -30,7 +30,9 @@ export default {
   methods: {
     // 添加
     addTodo(todoTxt) {
+
       this.todos.unshift(todoTxt);
+
     },
     // 勾选
     todoChange(id) {

@@ -1,27 +1,29 @@
 <template>
-  <li>
-    <label>
-      <input type="checkbox" :checked="todoObj.done" @change="checkedChange(todoObj.id)" />
-      <!-- <input v-show="!todoObj.isEdit" type="checkbox" /> -->
-      <input
-        type="text"
-        ref="inputText"
-        v-show="todoObj.isEdit"
-        :value="todoObj.title"
-        @blur="handleBlur(todoObj, $event)"
-      />
-      <span v-show="!todoObj.isEdit">{{ todoObj.title }}</span>
-    </label>
-    <button class="btn btn-danger" @click="todoDelete(todoObj.id)">删除</button>
-    <button class="btn btn-edit" v-show="!todoObj.isEdit" @click="handleEdit(todoObj)">编辑</button>
-  </li>
+  <transition name="todo" appear>
+    <li>
+      <label>
+        <input type="checkbox" :checked="todo.done" @change="checkedChange(todo.id)" />
+        <!-- <input v-show="!todo.isEdit" type="checkbox" /> -->
+        <input
+          type="text"
+          ref="inputText"
+          v-show="todo.isEdit"
+          :value="todo.title"
+          @blur="handleBlur(todo, $event)"
+        />
+        <span v-show="!todo.isEdit">{{ todo.title }}</span>
+      </label>
+      <button class="btn btn-danger" @click="todoDelete(todo.id)">删除</button>
+      <button class="btn btn-edit" v-show="!todo.isEdit" @click="handleEdit(todo)">编辑</button>
+    </li>
+  </transition>
 </template>
 
 <script>
 import pubsub from 'pubsub-js'
 export default {
   name: "MyItem",
-  props: ["todoObj"],
+  props: ["todo"],
   methods: {
     checkedChange(id) {
       this.$bus.$emit("todoChange", id)
@@ -32,21 +34,21 @@ export default {
         // this.$bus.$emit("todoDel", id)
         pubsub.publish("todoDel", id)
     },
-    handleEdit(todoObj) {
+    handleEdit(todo) {
       // console.log("handleEdit被调用了")
-      if (todoObj.hasOwnProperty("isEdit")) {
+      if (todo.hasOwnProperty("isEdit")) {
         console.log("有isEdit属性")
-        todoObj.isEdit = false
+        todo.isEdit = false
 
-        if (todoObj.isEdit === false) {
-          todoObj.isEdit = true
+        if (todo.isEdit === false) {
+          todo.isEdit = true
         } else {
-          todoObj.isEdit = false
+          todo.isEdit = false
         }
       } else {
         console.log("没有isEdit属性")
 
-        this.$set(todoObj, "isEdit", true)
+        this.$set(todo, "isEdit", true)
       }
       this.$nextTick(function () {
         this.$refs.inputText.focus()
@@ -56,12 +58,12 @@ export default {
       // }, 200)
 
     },
-    handleBlur(todoObj, e) {
-      // this.$set(todoObj, "isEdit", false)
+    handleBlur(todo, e) {
+      // this.$set(todo, "isEdit", false)
       if (
         e.target.value.trim() == "") return alert("输入不能为空")
-      todoObj.isEdit = false
-      this.$bus.$emit("updataTodo", todoObj.id, e.target.value)
+      todo.isEdit = false
+      this.$bus.$emit("updataTodo", todo.id, e.target.value)
 
     }
 
@@ -109,5 +111,21 @@ li:before {
 
 li:last-child {
   border-bottom: none;
+}
+
+.todo-enter-active {
+  animation: atguigu 0.5s linear;
+}
+.todo-leave-active {
+  animation: atguigu 0.5s linear reverse;
+}
+
+@keyframes atguigu {
+  from {
+    transform: translateX(100%);
+  }
+  to {
+    transform: translateX(0px);
+  }
 }
 </style>
